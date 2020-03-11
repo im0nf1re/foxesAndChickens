@@ -15,8 +15,19 @@ namespace FoxesAndChickens
         public Form1()
         {
             InitializeComponent();
+            this.BackColor = Color.White;
             moves[0] = new List<List<coords>>();
             moves[1] = new List<List<coords>>();
+            pictureBox1.Width = this.Width - 10;
+            pictureBox1.Height = this.Height - 30;
+            pictureBox1.Location = new Point(5, 5);
+            label1.BackColor = Color.Transparent;
+            chickenNumLabel.BackColor = Color.Transparent;
+            pictureBox1.Controls.Add(label1);
+            pictureBox1.Controls.Add(chickenNumLabel);
+            areaCellHeight = pictureBox1.Height / 7 - 2;
+            areaCellWidth = pictureBox1.Width / 7 - 2;
+
         }
         Bitmap bitmap;
         Graphics g;
@@ -124,9 +135,79 @@ namespace FoxesAndChickens
                     {
                         maxIndex[k] = i;
                     }
+
+                    
                 }
                 
             }
+            //если максимальные пути у обоих лис нулевые, прописываются рандомные пути
+            int[] foxCanWalkCount = new int[2];
+            if (moves[0][maxIndex[0]].Count == 0 && moves[1][maxIndex[1]].Count == 0)
+            {
+                for (int k = 0; k < 2; k++)
+                {
+                    bool foxCanWalk = false;
+                    int fx1 = 0, fy1 = 0;
+                    // если у рандомной лисы есть куда идти, то она идет в рандомную сторону,
+                    // если идти некуда, остается на месте
+                    for (int i = 0; i < 4; i++)
+                    {
+                        switch (i)
+                        {
+                            case 0:
+                                fx1 = startX[k] - 1;
+                                fy1 = startY[k];
+                                break;
+                            case 1:
+                                fx1 = startX[k];
+                                fy1 = startY[k] - 1;
+                                break;
+                            case 2:
+                                fx1 = startX[k] + 1;
+                                fy1 = startY[k];
+                                break;
+                            case 3:
+                                fx1 = startX[k];
+                                fy1 = startY[k] + 1;
+                                break;
+                        }
+                        if (area[fx1, fy1] == '0') foxCanWalk = true;
+                        if (area[fx1, fy1] != '0') foxCanWalkCount[k]++;
+                    }
+
+                    if (foxCanWalk)
+                    {
+                        do
+                        {
+                            switch (rnd.Next(0, 4))
+                            {
+                                case 0:
+                                    fx1 = startX[k] - 1;
+                                    fy1 = startY[k];
+                                    break;
+                                case 1:
+                                    fx1 = startX[k];
+                                    fy1 = startY[k] - 1;
+                                    break;
+                                case 2:
+                                    fx1 = startX[k] + 1;
+                                    fy1 = startY[k];
+                                    break;
+                                case 3:
+                                    fx1 = startX[k];
+                                    fy1 = startY[k] + 1;
+                                    break;
+                            }
+                        } while (area[fx1, fy1] != '0');
+
+                        moves[k].Add(new List<coords>());
+                        moves[k][moves[k].Count - 1].Add(new coords(0, 0, fx1, fy1));
+                        maxIndex[k] = moves[k].Count - 1;
+                    }
+                    
+                }
+            }
+
             if (moves[0][maxIndex[0]].Count > moves[1][maxIndex[1]].Count)
             {
                 //выбор лисы для хода
@@ -138,55 +219,31 @@ namespace FoxesAndChickens
                 foxNum = rnd.Next(0, 2);
             }
             else foxNum = 1;
-            ////////////////////////////////////////////////////
+  
             /////чистка куриц с поля
-            for (int i = 0; i < moves[foxNum][maxIndex[foxNum]].Count; i++)
+            if (foxCanWalkCount[0] != 4 || foxCanWalkCount[1] != 4)
             {
-                area[moves[foxNum][maxIndex[foxNum]][i].x, moves[foxNum][maxIndex[foxNum]][i].y] = '0';
-            }
-            //если все пути пустые, лиса ходит рандомно
-            if (moves[foxNum][maxIndex[foxNum]].Count == 0)
-            {
-                int fx1 = 0, fy1 = 0;
-                do
+                if (moves[foxNum][maxIndex[foxNum]][moves[foxNum][maxIndex[foxNum]].Count - 1].x != 0)
                 {
-                    switch (rnd.Next(0, 4))
+                    for (int i = 0; i < moves[foxNum][maxIndex[foxNum]].Count; i++)
                     {
-                        case 0:
-                            fx1 = startX[foxNum] - 1;
-                            fy1 = startY[foxNum];
-                            break;
-                        case 1:
-                            fx1 = startX[foxNum];
-                            fy1 = startY[foxNum] - 1;
-                            break;
-                        case 2:
-                            fx1 = startX[foxNum] + 1;
-                            fy1 = startY[foxNum];
-                            break;
-                        case 3:
-                            fx1 = startX[foxNum];
-                            fy1 = startY[foxNum] + 1;
-                            break;
+                        area[moves[foxNum][maxIndex[foxNum]][i].x, moves[foxNum][maxIndex[foxNum]][i].y] = '0';
                     }
-                } while (area[fx1, fy1] != '0');
-                foxes[foxNum].x = fx1;
-                foxes[foxNum].y = fy1;
-                area[fx1, fy1] = 'f';
-            }
-            else
-            {
+                }
+
                 setFox(foxes[foxNum],
-                     moves[foxNum][maxIndex[foxNum]][moves[foxNum][maxIndex[foxNum]].Count - 1].fx,
-                     moves[foxNum][maxIndex[foxNum]][moves[foxNum][maxIndex[foxNum]].Count - 1].fy);
+                    moves[foxNum][maxIndex[foxNum]][moves[foxNum][maxIndex[foxNum]].Count - 1].fx,
+                    moves[foxNum][maxIndex[foxNum]][moves[foxNum][maxIndex[foxNum]].Count - 1].fy);
+                area[startX[foxNum], startY[foxNum]] = '0';
             }
-            area[startX[foxNum], startY[foxNum]] = '0';
+            
+
             moves[0].Clear();
             moves[1].Clear();
 
         }
 
-        private void perebor(Fox fox, ref int count, int k, int startX, int startY, List<coords> moveList)
+        private void perebor(Fox fox, ref int count, int k, int prevX, int prevY, List<coords> moveList)
         {
             count++;
             List<coords> move = new List<coords>();
@@ -223,19 +280,28 @@ namespace FoxesAndChickens
                 {
                     if (area[fx1 - fox.x + fx1, fy1 - fox.y + fy1] == '0')
                     {
+                        prevX = fox.x;
+                        prevY = fox.y;
                         setFox(fox, fx1 - fox.x + fx1, fy1 - fox.y + fy1);
                         move.Add(new coords(fx1, fy1, fox.x, fox.y));
-                        moves[k].Add(move);
+                        moves[k].Add(new List<coords>());
+                        for (int i = 0; i < move.Count; i++)
+                        {
+                            moves[k][count].Add(move[i]);
+                        }
                         //стирать убитых куриц и передвинутую лису
                         area[fx1, fy1] = '0';
-                        perebor(fox, ref count, k, startX, startY, move);
+                        perebor(fox, ref count, k, prevX, prevY, move);
+                        move.Clear();
+                        
                     }
                     else error++;
                 }
                 else error++;
                 if (error == 4)
                 {
-                    setFox(fox, startX, startY);
+                    
+                    setFox(fox, prevX, prevY);
                     for (int i = 0; i < moves[k].Count; i++)
                     {  
                         for (int j = 0; j < moves[k][i].Count; j++)
@@ -250,7 +316,7 @@ namespace FoxesAndChickens
 
         private void drawArea()
         {
-            g.FillRectangle(b, 0, 0, 700, 700);
+            g.FillRectangle(b, 0, 0, pictureBox1.Width, pictureBox1.Height);
             for (int i = 0; i < 7; i++)
             {
                 if (i > 1 && i < 5)
@@ -295,6 +361,41 @@ namespace FoxesAndChickens
 
         bool clicked = false;
         int cx, cy, cx1, cy1;
+
+        private void ChickenNumLabel_TextChanged(object sender, EventArgs e)
+        {
+            if (Convert.ToInt32(chickenNumLabel.Text) < 15  &&
+                Convert.ToInt32(chickenNumLabel.Text) > 12)
+            {
+                chickenNumLabel.ForeColor = Color.Orange;
+            }
+            if (Convert.ToInt32(chickenNumLabel.Text) < 12)
+            {
+                chickenNumLabel.ForeColor = Color.Red;
+            }
+        }
+
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+            pictureBox1.Width = this.Width - 10;
+            pictureBox1.Height = this.Height - 30;
+            if (pictureBox1.Width > pictureBox1.Height)
+            {
+                pictureBox1.Width = pictureBox1.Height;
+            }
+            if (pictureBox1.Width < pictureBox1.Height)
+            {
+                pictureBox1.Height = pictureBox1.Width;
+            }
+            pictureBox1.Location = new Point((Width - pictureBox1.Width) / 2, (Height - pictureBox1.Height) / 2 - 5);
+            
+            areaCellHeight = pictureBox1.Height / 7 - 2;
+            areaCellWidth = pictureBox1.Width / 7 - 2;
+            bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+            g = Graphics.FromImage(bitmap);
+            draw();
+        }
+
         private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
             if (!clicked)
@@ -303,10 +404,10 @@ namespace FoxesAndChickens
                 cx = e.X / areaCellWidth + 1;
                 cy = e.Y / areaCellHeight + 1;
                 if (area[cx, cy] == 'c')
-                    g.DrawRectangle(new Pen(Color.Green, 2),
+                    g.DrawRectangle(new Pen(Color.Green, 3),
                         e.X / areaCellWidth * areaCellWidth + 1,
                         e.Y / areaCellHeight * areaCellHeight + 1,
-                        areaCellWidth, areaCellHeight);
+                        areaCellWidth - 3, areaCellHeight - 3);
                 else
                 {
                     clicked = false;
@@ -317,8 +418,8 @@ namespace FoxesAndChickens
             {
                 draw();
                 clicked = false;
-                cx1 = e.X / 60 + 1;
-                cy1 = e.Y / 60 + 1;
+                cx1 = e.X / areaCellWidth + 1;
+                cy1 = e.Y / areaCellHeight + 1;
 
                 startMove(cx, cy, cx1, cy1);
             }
@@ -376,9 +477,10 @@ namespace FoxesAndChickens
                     if (area[i, j] == 'c')
                         chickenNum++;
 
+            chickenNumLabel.Text = chickenNum.ToString();
             if (chickenNum < 9)
             {
-                MessageBox.Show("Не поздравляю, вы проиграли!");
+                MessageBox.Show("Вы проиграли");
                 this.Close();
             }
                     

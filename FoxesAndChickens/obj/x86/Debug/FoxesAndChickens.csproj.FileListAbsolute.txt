@@ -16,3 +16,12 @@ C:\Users\Артем\Desktop\FoxesAndChickens\FoxesAndChickens\obj\x86\Debug\Foxe
 C:\Users\Артем\Desktop\FoxesAndChickens\FoxesAndChickens\obj\x86\Debug\FoxesAndChickens.exe
 C:\Users\Артем\Desktop\FoxesAndChickens\FoxesAndChickens\obj\x86\Debug\FoxesAndChickens.pdb
 C:\Users\Артем\Desktop\FoxesAndChickens\FoxesAndChickens\obj\x86\Debug\FoxesAndChickens.Images.resources
+C:\Users\student\Desktop\FoxesAndChickens\FoxesAndChickens\obj\x86\Debug\FoxesAndChickens.exe
+C:\Users\student\Desktop\FoxesAndChickens\FoxesAndChickens\obj\x86\Debug\FoxesAndChickens.pdb
+C:\Users\student\Desktop\FoxesAndChickens\FoxesAndChickens\bin\Debug\FoxesAndChickens.exe
+C:\Users\student\Desktop\FoxesAndChickens\FoxesAndChickens\bin\Debug\FoxesAndChickens.pdb
+C:\Users\student\Desktop\FoxesAndChickens\FoxesAndChickens\obj\x86\Debug\FoxesAndChickens.csprojResolveAssemblyReference.cache
+C:\Users\student\Desktop\FoxesAndChickens\FoxesAndChickens\obj\x86\Debug\FoxesAndChickens.Form1.resources
+C:\Users\student\Desktop\FoxesAndChickens\FoxesAndChickens\obj\x86\Debug\FoxesAndChickens.Images.resources
+C:\Users\student\Desktop\FoxesAndChickens\FoxesAndChickens\obj\x86\Debug\FoxesAndChickens.Properties.Resources.resources
+C:\Users\student\Desktop\FoxesAndChickens\FoxesAndChickens\obj\x86\Debug\FoxesAndChickens.csproj.GenerateResource.Cache
